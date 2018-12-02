@@ -38,7 +38,9 @@ public class EchoClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
+                            //添加分隔符 “$_”
                             ByteBuf delimiter = Unpooled.copiedBuffer("$_".getBytes());
+                            //分隔符作结束标志的解码器
                             ch.pipeline().addLast(
                                     new DelimiterBasedFrameDecoder(1024, delimiter));
                             ch.pipeline().addLast(new StringDecoder());

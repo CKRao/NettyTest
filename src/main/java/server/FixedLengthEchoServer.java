@@ -10,16 +10,17 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.FixedLengthFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 /**
  * @Author: ClarkRao
- * @Date: 2018/12/2 20:09
+ * @Date: 2018/12/2 20:52
  * @Description:
  */
-public class EchoServer {
+public class FixedLengthEchoServer {
     public void bind(int port) throws Exception {
 
         //配置服务端的NIO线程组
@@ -35,13 +36,9 @@ public class EchoServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            //添加分隔符 “$_”
-                            ByteBuf delimiter = Unpooled.copiedBuffer("$_".getBytes());
-                            //分隔符作结束标志的解码器
-                            ch.pipeline().addLast(
-                                    new DelimiterBasedFrameDecoder(1024, delimiter));
+                            ch.pipeline().addLast(new FixedLengthFrameDecoder(20));
                             ch.pipeline().addLast(new StringDecoder());
-                            ch.pipeline().addLast(new EchoServerHandler());
+                            ch.pipeline().addLast(new FixedLengthEchoServerHandler());
                         }
                     });
 
@@ -68,6 +65,6 @@ public class EchoServer {
             }
         }
 
-        new EchoServer().bind(port);
+        new FixedLengthEchoServer().bind(port);
     }
 }
